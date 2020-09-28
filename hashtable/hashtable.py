@@ -63,7 +63,12 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
-        # Your code here
+        hash = 5381 
+        # Just a "magic" number that, in testing,
+        # resulted in fewer collisions and better avalanching.
+        for i in key:
+            hash = (( hash << 5) + hash) + ord(i)
+        return hash
 
     def hash_index(self, key):
         """
@@ -81,7 +86,9 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        index = self.hash_index(key)
+        # at hashed index insert a node with key, value pair
+        self.buckets[index] = HashTableEntry(key, value)
 
 
     def delete(self, key):
@@ -92,8 +99,16 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        index = self.hash_index(key)
+        current = self.buckets[index]
 
+        # if key is found
+        if current.key == key:
+            # nullify/remove value
+            current.value = None
+        # no key found, print message
+        else:
+            print("Key not found.")
 
     def get(self, key):
         """
@@ -103,8 +118,11 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-
+        index = self.hash_index(key)
+        # at hashed index save node
+        entry = self.buckets[index]
+        # return value of node
+        return entry.value
 
     def resize(self, new_capacity):
         """
