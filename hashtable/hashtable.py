@@ -23,7 +23,8 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = MIN_CAPACITY
         self.buckets = [None] * self.capacity
-
+        # counter to keep track of number of items in table
+        self.counter = 0
 
     def get_num_slots(self):
         """
@@ -35,7 +36,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        #number of slots is length of capacity
+        return len(self.buckets)
 
 
     def get_load_factor(self):
@@ -44,8 +46,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-
+        # length of elements divided by length of capacity
+        return self.counter / self.get_num_slots()
 
     def fnv1(self, key):
         """
@@ -86,9 +88,29 @@ class HashTable:
 
         Implement this.
         """
+        self.counter += 1
         index = self.hash_index(key)
-        # at hashed index insert a node with key, value pair
-        self.buckets[index] = HashTableEntry(key, value)
+        current = self.buckets[index]
+        # if nothing is at this index
+        if self.buckets[index] is None:
+            # at hashed index insert a node with key, value pair
+            self.buckets[index] = HashTableEntry(key, value)
+
+        # loop through index's Linked List
+        while current is not None:
+            # if key is found
+            if current.key == key:
+                # set inputed value to node's value
+                current.value = value
+                break
+            # if next node is nothing
+            if current.next is None:
+                # set current's next to inputed node
+                current.next = HashTableEntry(key, value)
+                break
+            # continue to current's next
+            current = current.next
+
 
 
     def delete(self, key):
@@ -102,13 +124,19 @@ class HashTable:
         index = self.hash_index(key)
         current = self.buckets[index]
 
-        # if key is found
-        if current.key == key:
-            # nullify/remove value
-            current.value = None
-        # no key found, print message
-        else:
-            print("Key not found.")
+        # loop through index's Linked List
+        while current is not None:
+            # if key is found
+            if current.key == key:
+                # nullify/remove value
+                current.value = None
+                self.counter -= 1
+                break
+            # no key found, print message
+            if current.next is None and current.key != key:
+                return print("Key not found.")
+            # continue to current's next
+            current = current.next
 
     def get(self, key):
         """
@@ -119,10 +147,19 @@ class HashTable:
         Implement this.
         """
         index = self.hash_index(key)
-        # at hashed index save node
-        entry = self.buckets[index]
-        # return value of node
-        return entry.value
+        current = self.buckets[index]
+
+        # loop through index's Linked List
+        while current is not None:
+            # if no next node and no 
+            if current.next is None and current.key != key:
+                return
+            # if key is found
+            if current.key == key:
+                # return value of node
+                return current.value
+            # continue to current's next
+            current = current.next
 
     def resize(self, new_capacity):
         """
@@ -131,9 +168,12 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        # make a new array of double elements
+        # traverse each entry of old array and add to new
 
-
+        # IE. for index in range(len(array)):
+        #         for entry in array at index:
+        #             add entry to new array
 
 if __name__ == "__main__":
     ht = HashTable(8)
