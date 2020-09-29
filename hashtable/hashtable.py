@@ -92,6 +92,12 @@ class HashTable:
         index = self.hash_index(key)
         current = self.buckets[index]
         # if nothing is at this index
+
+        # if load_factor >= 0.7
+        if self.get_load_factor() >= 0.7:
+            # call resize that doubles length of buckets
+            self.resize(len(self.buckets) * 2)
+
         if self.buckets[index] is None:
             # at hashed index insert a node with key, value pair
             self.buckets[index] = HashTableEntry(key, value)
@@ -169,11 +175,16 @@ class HashTable:
         Implement this.
         """
         # make a new array of double elements
+        old_table = self.buckets
         # traverse each entry of old array and add to new
+        self.buckets = [None] * new_capacity
 
-        # IE. for index in range(len(array)):
-        #         for entry in array at index:
-        #             add entry to new array
+        for item in old_table:
+            # if there is a value
+            if item is not None:
+                # make new index for new table
+                new_index = self.hash_index(item.key)
+                self.buckets[new_index] = item
 
 if __name__ == "__main__":
     ht = HashTable(8)
