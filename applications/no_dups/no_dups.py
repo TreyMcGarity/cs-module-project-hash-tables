@@ -1,6 +1,12 @@
 def no_dups(s):
-    # Your code here
+    cache = {}
+    words = s.split()
 
+    for word in words:
+        if word not in cache:
+            cache[word] = 1
+
+    return " ".join(cache)
 
 
 if __name__ == "__main__":
